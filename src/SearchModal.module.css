@@ -1,0 +1,96 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 20;
+  background-color: rgba(0, 0, 0, 0.60);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 300px;
+  z-index: 30;
+  background-color: white;
+  overflow: hidden;
+  animation: slide-down 300ms ease-out forwards;
+}
+
+.content {
+  margin: 40px 50px;
+}
+
+.search-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 60px;
+  border: 1px solid #f7f7f7;
+  border-radius: 18px;
+  box-shadow: rgba(0, 0, 0, 0.10) 0.5px 0.5px 2px 0.5px;
+}
+
+.location-search {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 34%;
+  height: 100%;;
+  padding: 0 20px;
+  border-right: 2px solid #f7f7f7;
+}
+
+.location-title {
+  font-weight: bold;
+  font-size: small;
+  margin-bottom: 5px;
+}
+
+.location-input {
+  border: none;
+  outline: none;
+  font-size: medium;
+  padding: 0;
+}
+
+.location-input:focus {
+  border: none;
+  outline: none;
+}
+
+.guests-search {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 33%;
+  height: 100%;;
+  padding: 0 20px;
+  border-right: 2px solid #f7f7f7;
+}
+
+.search-button-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 33%;
+  height: 100%;;
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-3rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

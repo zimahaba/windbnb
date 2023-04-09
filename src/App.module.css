@@ -1,0 +1,133 @@
+
+.main {
+  display: flex;
+  flex-direction: column;
+  margin: 20px 50px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.search-div {
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid #f7f7f7;
+  border-radius: 18px;
+  box-shadow: rgba(0, 0, 0, 0.10) 0.5px 0.5px 2px 0.5px;
+}
+
+.search-field {
+  display: flex;
+  cursor: pointer;
+  justify-content: center;
+  height: 100%;
+  align-items: center;
+  padding: 10px;
+}
+
+.search-icon {
+  width: 20px;
+}
+
+.location-search {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 20px;
+  border-right: 2px solid #f7f7f7;
+}
+
+.guests-search {
+  color: #8a8a8a;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 20px;
+  border-right: 2px solid #f7f7f7;
+}
+
+.properties {
+  margin-top: 20px;
+}
+
+.properties-title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+.properties-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.property {
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.property-image {
+  width: 300px;
+  height: 200px;
+  border-radius: 10px;
+}
+
+.property-info {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.super-host {
+  border: 1px solid;
+  border-radius: 12px;
+  padding: 4px;
+  margin-right: 5px;
+  font-weight: bold;
+  font-size: x-small;
+}
+
+.desc-1 {
+  display: flex;
+  flex-direction: row
+}
+
+.prop-type {
+  display: flex;
+  align-items: center;
+  color: #8a8a8a;
+}
+
+.property-desc {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+}
+
+.rating-img {
+  width: 20px;
+}
+
+.prop-title {
+  margin-top: 10px;
+}
