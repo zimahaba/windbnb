@@ -20,6 +20,9 @@
 }
 
 .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin: 40px 50px;
 }
 
@@ -28,7 +31,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  min-width: 840px;
   height: 60px;
   border: 1px solid #f7f7f7;
   border-radius: 18px;
@@ -40,16 +43,46 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  width: 34%;
-  height: 100%;;
-  padding: 0 20px;
+  min-width: 360px;
+  max-width: 360px;
+  height: 100%;
   border-right: 2px solid #f7f7f7;
+  cursor: pointer;
 }
 
-.location-title {
+.location-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-width: 319px;
+  max-width: 319px;
+  height: 100%;
+  border-radius: 16px;
+  padding: 0 20px;
+}
+
+.location-wrapper-border {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-width: 319px;
+  max-width: 319px;
+  height: 100%;
+  border: 1px solid;
+  border-radius: 16px;
+  padding: 0 20px;
+}
+
+.div-title {
   font-weight: bold;
   font-size: small;
   margin-bottom: 5px;
+}
+
+.div-label {
+  color: #8a8a8a
 }
 
 .location-input {
@@ -66,20 +99,23 @@
 
 .guests-search {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  width: 33%;
-  height: 100%;;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-width: 220px;
+  max-width: 220px;
+  height: 100%;
   padding: 0 20px;
   border-right: 2px solid #f7f7f7;
+  cursor: pointer;
 }
 
 .search-button-div {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 33%;
+  min-width: 240px;
+  max-width: 240px;
   height: 100%;;
 }
 
@@ -94,3 +130,28 @@
   }
 }
 
+.results {
+  display: flex;
+  flex-direction: row;
+  width: 840px;
+}
+
+.location-results {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 10px;
+}
+
+.location-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.location-icon {
+  margin-right: 5px;
+  width: 20px;
+}
