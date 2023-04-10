@@ -38,66 +38,66 @@ const ModalOverlay = props => {
     }
   }
 
-  const locationClickHandler = () => {
-    setShowLocationInput(true);
-    setLocationWrapperClass('location-wrapper-border');
-    if (locationInput.current !== null) {
-      locationInput.current.focus();
-      if (locationInput.current.value.length > 2) {
-        //setLocationResults(properties.filter(property => property.city === locationInput.current.value).map(property => property.city + ', ' + property.country));
-        setShowLocationResults(true);
-      }
-    }
-  }
-
-  const locationFieldBlurHandler = (event) => {
-    console.log(event);
-    //setShowLocationResults(false);
-    setLocationWrapperClass('location-wrapper');
-    if (locationInput.current.value === '') {
-      setShowLocationInput(false);
-    }
-  }
-
   const locationResultClickHandler = (location) => {
-    console.log('location');
+    locationInput.current.value = location;
+    setShowLocationResults(false);
   }
 
   useEffect(() => {
     if (locationInput.current !== null) {
       locationInput.current.focus();
       if (locationInput.current.value.length > 2) {
-        //setLocationResults(properties.filter(property => property.city === locationInput.current.value).map(property => property.city + ', ' + property.country));
         setShowLocationResults(true);
       }
       setLocationWrapperClass('location-wrapper-border');
     }
   }, [showLocationInput])
 
+  const test = (event) => {
+    if (event.target.id === 'location-search-div' || event.target.id === 'location-search-input' || event.target.id === 'location-search-label') {
+      setShowLocationInput(true);
+      setLocationWrapperClass('location-wrapper-border');
+      if (locationInput.current !== null) {
+        locationInput.current.focus();
+        if (locationInput.current.value.length > 2) {
+          //setLocationResults(properties.filter(property => property.city === locationInput.current.value).map(property => property.city + ', ' + property.country));
+          setShowLocationResults(true);
+        }
+      }
+    } else {
+      setShowLocationResults(false);
+      setLocationWrapperClass('location-wrapper');
+      if (locationInput.current !== null && locationInput.current.value === '') {
+        setShowLocationInput(false);
+      }
+    }
+  }
+
   return (
-    <div className={classes.modal}>
+    <div className={classes.modal} onClick={test}>
       <div className={classes.content}>
         
         <div className={classes['search-div']}>
-          <div onClick={locationClickHandler} className={classes['location-search']}>
-            <div className={classes[locationWrapperClass]}>
+          <div className={classes['location-search']}>
+            <div id='location-search-div' className={classes[locationWrapperClass]}>
               <div className={classes['div-title']}>Location</div>
               <div>
                   {showLocationInput &&
-                    <input className={classes['location-input']} onBlur={locationFieldBlurHandler} onChange={locationChangeHandler} ref={locationInput}></input>}
+                    <input id='location-search-input' className={classes['location-input']} onChange={locationChangeHandler} ref={locationInput}></input>}
                   {showLocationInput == false &&
-                    <label className={classes['div-label']}>Add location</label>}
+                    <label id='location-search-label' className={classes['div-label']}>Add location</label>}
               </div>
             </div>
           </div>
           <div className={classes['guests-search']}>
             <div className={classes['div-title']}>Guests</div>
             <div>
-              <label className={classes['div-label']}>1 guest</label>
+              <label className={classes['div-label']}>Add guests</label>
             </div>
           </div>
           <div className={classes['search-button-div']}>Search</div>
         </div>
+
         <div className={classes.results}>
           {showLocationResult &&
             <div className={classes['location-results']}>
