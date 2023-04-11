@@ -3,17 +3,20 @@ import ReactDOM from 'react-dom';
 import classes from './SearchModal.module.css';
 import locationIcon from './assets/location.png';
 
-const Backdrop = props => {
-  return (
-    <div className={classes.backdrop} onClick={props.onCancel}></div>
-  );
-}
-
 const countries = ['Finland'];
 const locations = [{city: 'Helsinki', country: 'Finland'}, 
                 {city: 'Turku', country: 'Finland'}, 
                 {city: 'Vaasa', country: 'Finland'}, 
                 {city: 'Oulu', country: 'Finland'}];
+
+const locationIds = [];
+const guestsIds = [];
+
+const Backdrop = props => {
+  return (
+    <div className={classes.backdrop} onClick={props.onCancel}></div>
+  );
+}
 
 const ModalOverlay = props => {
 
@@ -22,6 +25,11 @@ const ModalOverlay = props => {
   const [locationWrapperClass, setLocationWrapperClass] = useState('location-wrapper');
   const [locationResults, setLocationResults] = useState(['Helsinki, Finland', 'Recife, Brasil']);
   const [showLocationResult, setShowLocationResults] = useState(false);
+
+  const [showGuestsFields, setShowGuestsFields] = useState(false);
+  const [adultsCount, setAdultsCount] = useState(0);
+  const [childrenCount, setChildrenCount] = useState(0);
+
 
   const locationChangeHandler = () => {
     if (locationInput.current.value.length > 2) {
@@ -44,6 +52,23 @@ const ModalOverlay = props => {
   }
 
   useEffect(() => {
+    showLocationIfInputAvailable();
+  }, [showLocationInput])
+
+  const hasParentId = (target, parentId) => {
+    let node = target;
+    while (node !== null) {
+      if (node.id === parentId) {
+        return true;
+      } else if (node.id === 'search-modal-content') {
+        return false;
+      }
+      node = node.parentNode;
+    }
+    return false;
+  }
+
+  const showLocationIfInputAvailable = () => {
     if (locationInput.current !== null) {
       locationInput.current.focus();
       if (locationInput.current.value.length > 2) {
@@ -51,31 +76,57 @@ const ModalOverlay = props => {
       }
       setLocationWrapperClass('location-wrapper-border');
     }
-  }, [showLocationInput])
+  }
 
-  const test = (event) => {
-    if (event.target.id === 'location-search-div' || event.target.id === 'location-search-input' || event.target.id === 'location-search-label') {
-      setShowLocationInput(true);
-      setLocationWrapperClass('location-wrapper-border');
-      if (locationInput.current !== null) {
-        locationInput.current.focus();
-        if (locationInput.current.value.length > 2) {
-          //setLocationResults(properties.filter(property => property.city === locationInput.current.value).map(property => property.city + ', ' + property.country));
-          setShowLocationResults(true);
-        }
-      }
+  const showLocation = () => {
+    setShowLocationInput(true);
+    showLocationIfInputAvailable();
+  }
+
+  const hideLocation = () => {
+    setShowLocationResults(false);
+    setLocationWrapperClass('location-wrapper');
+    if (locationInput.current !== null && locationInput.current.value === '') {
+      setShowLocationInput(false);
+    }
+  }
+
+  const modalClickHandler = (event) => {
+    if (hasParentId(event.target, 'location-search-div')) {
+      showLocation();
+      setShowGuestsFields(false);
+    } else if (hasParentId(event.target, 'guests-search-div') || hasParentId(event.target, 'guests-count')) {
+      setShowGuestsFields(true);
+      hideLocation();
     } else {
-      setShowLocationResults(false);
-      setLocationWrapperClass('location-wrapper');
-      if (locationInput.current !== null && locationInput.current.value === '') {
-        setShowLocationInput(false);
+      hideLocation();
+      setShowGuestsFields(false);      
+    }
+  }
+
+  const updateAdultsCount = (operation) => {
+    if (operation == 'add') {
+      setAdultsCount(adultsCount+1);
+    } else if (operation === 'subtract') {
+      if (adultsCount > 0) {
+        setAdultsCount(adultsCount-1);
+      }
+    }
+  }
+
+  const updateChildrenCount = (operation) => {
+    if (operation == 'add') {
+      setChildrenCount(childrenCount+1);
+    } else if (operation === 'subtract') {
+      if (childrenCount > 0) {
+        setChildrenCount(childrenCount-1);
       }
     }
   }
 
   return (
-    <div className={classes.modal} onClick={test}>
-      <div className={classes.content}>
+    <div className={classes.modal} onClick={modalClickHandler}>
+      <div id='search-modal-content' className={classes.content}>
         
         <div className={classes['search-div']}>
           <div className={classes['location-search']}>
@@ -90,9 +141,15 @@ const ModalOverlay = props => {
             </div>
           </div>
           <div className={classes['guests-search']}>
-            <div className={classes['div-title']}>Guests</div>
-            <div>
-              <label className={classes['div-label']}>Add guests</label>
+            <div id='guests-search-div' className={classes['guests-search-wrapper']}>
+              <div className={classes['div-title']}>Guests</div>
+              <div>
+                {adultsCount + childrenCount > 0 &&
+                  <label>{adultsCount + childrenCount} {adultsCount + childrenCount == 1 ? 'guest' : 'guests'}</label>}
+                {adultsCount + childrenCount == 0 &&
+                  <label className={classes['div-label']}>Add guests</label>}
+                
+              </div>
             </div>
           </div>
           <div className={classes['search-button-div']}>Search</div>
@@ -107,6 +164,29 @@ const ModalOverlay = props => {
                   {result}
                 </div>
               ))}
+            </div>
+          }
+
+          {showGuestsFields && 
+            <div id='guests-count' className={classes['guests-count']}>
+              <div className={classes['guests-count-wrapper']}>
+                <div>Adults</div>
+                <div className={classes['div-label']}>Ages 13 or above</div>
+                <div>
+                  <button className={classes['operation-button']} onClick={() => updateAdultsCount('subtract')}>-</button> 
+                    <label className={classes['count-label']}>{adultsCount}</label>
+                  <button className={classes['operation-button']} onClick={() => updateAdultsCount('add')}>+</button>
+                </div>
+              </div>
+              <div className={classes['guests-count-wrapper']}>
+                <div>Children</div>
+                <div className={classes['div-label']}>Ages 13 or above</div>
+                <div>
+                  <button className={classes['operation-button']} onClick={() => updateChildrenCount('subtract')}>-</button> 
+                    <label className={classes['count-label']}>{childrenCount}</label>
+                  <button className={classes['operation-button']} onClick={() => updateChildrenCount('add')}>+</button>
+                </div>
+              </div>
             </div>
           }
         </div>
