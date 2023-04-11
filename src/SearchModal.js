@@ -21,24 +21,26 @@ const ModalOverlay = props => {
   const locationInput = useRef(null);
   const [showLocationInput, setShowLocationInput] = useState(false);
   const [locationWrapperClass, setLocationWrapperClass] = useState('location-wrapper');
-  const [locationResults, setLocationResults] = useState(['Helsinki, Finland', 'Recife, Brasil']);
+  const [locationResults, setLocationResults] = useState([]);
+  const [location, setLocation] = useState({city: props.searchObject.city, country: props.searchObject.country});
   const [showLocationResult, setShowLocationResults] = useState(false);
 
   const [showGuestsFields, setShowGuestsFields] = useState(false);
   const [guestsWrapperClass, setGuestsWrapperClass] = useState('guests-search-wrapper');
-  const [adultsCount, setAdultsCount] = useState(0);
-  const [childrenCount, setChildrenCount] = useState(0);
+  const [adultsCount, setAdultsCount] = useState(props.searchObject.adultsCount);
+  const [childrenCount, setChildrenCount] = useState(props.searchObject.childrenCount);
 
 
   const locationChangeHandler = () => {
+    setLocation({city: '', country: ''});
     if (locationInput.current.value.length > 2) {
       let countriesFound = countries.filter(country => country.toUpperCase().includes(locationInput.current.value.toUpperCase()));
       if (countriesFound.length > 0) {
         setLocationResults(locations.filter(location => location.country.toUpperCase().includes(locationInput.current.value.toUpperCase()))
-          .map(location => location.city + ', ' + location.country));
+          .map(location => ({city: location.city, country: location.country})));
       } else {
         setLocationResults(locations.filter(location => location.city.toUpperCase().includes(locationInput.current.value.toUpperCase()))
-          .map(location => location.city + ', ' + location.country));
+          .map(location => ({city: location.city, country: location.country})));
       }
       
       setShowLocationResults(true);
@@ -47,13 +49,21 @@ const ModalOverlay = props => {
     }
   }
 
-  const locationResultClickHandler = (location) => {
-    locationInput.current.value = location;
+  const locationResultClickHandler = (selectedLocation) => {
+    locationInput.current.value = selectedLocation.city + ', ' + selectedLocation.country;
+    setLocation(selectedLocation);
     setShowLocationResults(false);
   }
 
   useEffect(() => {
-    showLocationIfInputAvailable();
+    if (location.city !== '' && location.country !== '') {
+      setShowLocationInput(true);
+      if (locationInput.current != null) {
+        locationInput.current.value = location.city + ', ' + location.country;
+      }
+    } else {
+showLocationIfInputAvailable();
+    }
   }, [showLocationInput])
 
   const hasParentId = (target, parentId) => {
@@ -116,7 +126,7 @@ const ModalOverlay = props => {
   }
 
   const updateAdultsCount = (operation) => {
-    if (operation == 'add') {
+    if (operation === 'add') {
       setAdultsCount(adultsCount+1);
     } else if (operation === 'subtract') {
       if (adultsCount > 0) {
@@ -126,7 +136,7 @@ const ModalOverlay = props => {
   }
 
   const updateChildrenCount = (operation) => {
-    if (operation == 'add') {
+    if (operation === 'add') {
       setChildrenCount(childrenCount+1);
     } else if (operation === 'subtract') {
       if (childrenCount > 0) {
@@ -136,11 +146,12 @@ const ModalOverlay = props => {
   }
   
   const searchButtonClickHandler = () => {
-    let location = '';
-    if (locationInput.current !== null) {
-      location = locationInput.current.value;
-    }
-    props.onConfirm(location, adultsCount + childrenCount);
+    props.onConfirm({city: location.city, 
+                    country: location.country, 
+                    hasLocation: location.city !== '' && location.country !== '', 
+                    adultsCount: adultsCount, 
+                    childrenCount: childrenCount,
+                    guests: adultsCount + childrenCount});
   }
 
   return (
@@ -154,7 +165,7 @@ const ModalOverlay = props => {
               <div>
                   {showLocationInput &&
                     <input id='location-search-input' className={classes['location-input']} onChange={locationChangeHandler} ref={locationInput}></input>}
-                  {showLocationInput == false &&
+                  {!showLocationInput &&
                     <label id='location-search-label' className={classes['div-label']}>Add location</label>}
               </div>
             </div>
@@ -164,8 +175,8 @@ const ModalOverlay = props => {
               <div className={classes['div-title']}>Guests</div>
               <div>
                 {adultsCount + childrenCount > 0 &&
-                  <label>{adultsCount + childrenCount} {adultsCount + childrenCount == 1 ? 'guest' : 'guests'}</label>}
-                {adultsCount + childrenCount == 0 &&
+                  <label>{adultsCount + childrenCount} {adultsCount + childrenCount === 1 ? 'guest' : 'guests'}</label>}
+                {adultsCount + childrenCount === 0 &&
                   <label className={classes['div-label']}>Add guests</label>}
                 
               </div>
@@ -185,7 +196,7 @@ const ModalOverlay = props => {
               {locationResults.map((result, index) => (
                 <div id={'location_result_' + index} className={classes['location-item']} onClick={() => locationResultClickHandler(result)}>
                   <img className={classes['location-icon']} src={locationIcon}/>
-                  {result}
+                  {result.city + ', ' + result.country}
                 </div>
               ))}
             </div>
@@ -224,14 +235,14 @@ const portalElement = document.getElementById('overlays');
 
 const SearchModal = props => {
 
-  const searchHandler = (location, guestsCount) => {
-    props.onConfirm(location, guestsCount);
+  const searchHandler = (searchObject) => {
+    props.onConfirm(searchObject);
   }
 
   return (
     <Fragment>
       {ReactDOM.createPortal(<Backdrop onCancel={props.onCancel}/>, portalElement)}
-      {ReactDOM.createPortal(<ModalOverlay onConfirm={searchHandler}/>, portalElement)}
+      {ReactDOM.createPortal(<ModalOverlay searchObject={props.searchObject} onConfirm={searchHandler}/>, portalElement)}
     </Fragment>
   );
 }
