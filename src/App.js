@@ -1,6 +1,6 @@
 import classes from './App.module.css';
 import logo from './assets/logo.png';
-import search from './assets/search.png';
+import search from './assets/search-red.png';
 import properties from './assets/stays.json';
 import rating from './assets/rating.png';
 import { useState } from 'react';
@@ -9,19 +9,36 @@ import SearchModal from './SearchModal';
 function App() {
 
   const [showSearch, setShowSearch] = useState(false);
-  const [city, setCity] = useState('Helsinki');
-  const [country, setCountry] = useState('Finland');
+  const [location, setLocation] = useState('');
+  const [guestsCount, setGuestsCount] = useState(0);
+  const [propertiesList, setPropertiesList] = useState(properties);
 
-  const locationClickHandler = () => {
+  const searchClickHandler = () => {
     setShowSearch(true);
   }
 
-  const guestsClickHandler = () => {
-    console.log('guests')
-  }
+  const searchConfirmHandler = (location, guestsCount) => {
+    setShowSearch(false);
+    setLocation(location);
+    console.log('location: ', location);
+    setGuestsCount(guestsCount);
 
-  const lensClickHandler = () => {
-    console.log('icon')
+    let filteredProperties = [...properties];
+    if (location !== '') {
+      let locationArray = location.split(',');
+      if (locationArray.length > 1) {
+        console.log('country: ', locationArray[1]);
+        filteredProperties = filteredProperties.filter(property => property.country === locationArray[1].trim());
+      }
+      console.log('city: ', locationArray[0]);
+      filteredProperties = filteredProperties.filter(property => property.city === locationArray[0].trim());
+    }
+
+    if (guestsCount > 0) {
+      filteredProperties = filteredProperties.filter(property => property.maxGuests >= guestsCount);
+    }
+    
+    setPropertiesList(filteredProperties)
   }
 
   return (
@@ -31,13 +48,19 @@ function App() {
           <img src={logo}/>
         </div>
         <div className={classes['search-div']}>
-          <div onClick={locationClickHandler} className={`${classes['search-field']} ${classes['location-search']}`}>
-            <div>{city + ', ' + country}</div>
+          <div onClick={searchClickHandler} className={`${classes['search-field']} ${classes['location-search']}`}>
+            <div>
+              {location === '' && <label className={classes['div-label']}>Add location</label>}
+              {location !== '' && <label style={{cursor: 'pointer'}}>{location}</label>}
+            </div>
           </div>
-          <div onClick={guestsClickHandler} className={`${classes['search-field']} ${classes['guests-search']}`}>
-            <div>Add guests</div>
+          <div onClick={searchClickHandler} className={`${classes['search-field']} ${classes['guests-search']}`}>
+            <div>
+              {guestsCount === 0 && <label className={classes['div-label']}>Add guests</label>}
+              {guestsCount > 0 && <label style={{cursor: 'pointer'}}>{guestsCount + ' ' + (guestsCount > 1 ? 'guests' : 'guest')}</label>}
+            </div>
           </div>
-          <div onClick={lensClickHandler} className={classes['search-field']}>
+          <div onClick={searchClickHandler} className={classes['search-field']}>
             <img className={classes['search-icon']} src={search}/>
           </div>
         </div>
@@ -52,7 +75,7 @@ function App() {
           </div>
         </div>
         <div className={classes['properties-list']}>
-          {properties.map(prop => (
+          {propertiesList.map(prop => (
               <div className={classes['property']}>
                 <img className={classes['property-image']} src={prop.photo}></img>
                 <div className={classes['property-info']}>
@@ -76,7 +99,7 @@ function App() {
       </div>
       
       {showSearch &&
-        <SearchModal onCancel={() => setShowSearch(false)}/>
+        <SearchModal onConfirm={searchConfirmHandler} onCancel={() => setShowSearch(false)}/>
       }
     </div>
   );

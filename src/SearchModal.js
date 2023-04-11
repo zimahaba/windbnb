@@ -2,15 +2,13 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import ReactDOM from 'react-dom';
 import classes from './SearchModal.module.css';
 import locationIcon from './assets/location.png';
+import searchIcon from './assets/search-white.png';
 
 const countries = ['Finland'];
 const locations = [{city: 'Helsinki', country: 'Finland'}, 
                 {city: 'Turku', country: 'Finland'}, 
                 {city: 'Vaasa', country: 'Finland'}, 
                 {city: 'Oulu', country: 'Finland'}];
-
-const locationIds = [];
-const guestsIds = [];
 
 const Backdrop = props => {
   return (
@@ -27,6 +25,7 @@ const ModalOverlay = props => {
   const [showLocationResult, setShowLocationResults] = useState(false);
 
   const [showGuestsFields, setShowGuestsFields] = useState(false);
+  const [guestsWrapperClass, setGuestsWrapperClass] = useState('guests-search-wrapper');
   const [adultsCount, setAdultsCount] = useState(0);
   const [childrenCount, setChildrenCount] = useState(0);
 
@@ -35,9 +34,11 @@ const ModalOverlay = props => {
     if (locationInput.current.value.length > 2) {
       let countriesFound = countries.filter(country => country.toUpperCase().includes(locationInput.current.value.toUpperCase()));
       if (countriesFound.length > 0) {
-        setLocationResults(locations.filter(location => location.country.toUpperCase().includes(locationInput.current.value.toUpperCase())).map(location => location.city + ', ' + location.country));
+        setLocationResults(locations.filter(location => location.country.toUpperCase().includes(locationInput.current.value.toUpperCase()))
+          .map(location => location.city + ', ' + location.country));
       } else {
-        setLocationResults(locations.filter(location => location.city.toUpperCase().includes(locationInput.current.value.toUpperCase())).map(location => location.city + ', ' + location.country));
+        setLocationResults(locations.filter(location => location.city.toUpperCase().includes(locationInput.current.value.toUpperCase()))
+          .map(location => location.city + ', ' + location.country));
       }
       
       setShowLocationResults(true);
@@ -91,16 +92,26 @@ const ModalOverlay = props => {
     }
   }
 
+  const showGuests = () => {
+    setShowGuestsFields(true);
+    setGuestsWrapperClass('guests-search-wrapper-border');
+  }
+
+  const hideGuests = () => {
+    setShowGuestsFields(false);
+    setGuestsWrapperClass('guests-search-wrapper');
+  }
+
   const modalClickHandler = (event) => {
     if (hasParentId(event.target, 'location-search-div')) {
       showLocation();
-      setShowGuestsFields(false);
+      hideGuests();
     } else if (hasParentId(event.target, 'guests-search-div') || hasParentId(event.target, 'guests-count')) {
-      setShowGuestsFields(true);
+      showGuests();
       hideLocation();
     } else {
       hideLocation();
-      setShowGuestsFields(false);      
+      hideGuests();
     }
   }
 
@@ -123,6 +134,14 @@ const ModalOverlay = props => {
       }
     }
   }
+  
+  const searchButtonClickHandler = () => {
+    let location = '';
+    if (locationInput.current !== null) {
+      location = locationInput.current.value;
+    }
+    props.onConfirm(location, adultsCount + childrenCount);
+  }
 
   return (
     <div className={classes.modal} onClick={modalClickHandler}>
@@ -141,7 +160,7 @@ const ModalOverlay = props => {
             </div>
           </div>
           <div className={classes['guests-search']}>
-            <div id='guests-search-div' className={classes['guests-search-wrapper']}>
+            <div id='guests-search-div' className={classes[guestsWrapperClass]}>
               <div className={classes['div-title']}>Guests</div>
               <div>
                 {adultsCount + childrenCount > 0 &&
@@ -152,7 +171,12 @@ const ModalOverlay = props => {
               </div>
             </div>
           </div>
-          <div className={classes['search-button-div']}>Search</div>
+          <div className={classes['search-button-div']}>
+            <button onClick={searchButtonClickHandler} className={classes['search-button']}>
+              <img className={classes['search-icon']} src={searchIcon}/>
+              Search
+            </button>
+          </div>
         </div>
 
         <div className={classes.results}>
@@ -200,8 +224,8 @@ const portalElement = document.getElementById('overlays');
 
 const SearchModal = props => {
 
-  const searchHandler = () => {
-
+  const searchHandler = (location, guestsCount) => {
+    props.onConfirm(location, guestsCount);
   }
 
   return (

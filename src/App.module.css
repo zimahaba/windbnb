@@ -2,7 +2,7 @@
 .main {
   display: flex;
   flex-direction: column;
-  margin: 20px 50px;
+  margin: 20px 140px;
 }
 
 .header {
@@ -22,6 +22,11 @@
   border: 1px solid #f7f7f7;
   border-radius: 18px;
   box-shadow: rgba(0, 0, 0, 0.10) 0.5px 0.5px 2px 0.5px;
+}
+
+.div-label {
+  color: #8a8a8a;
+  cursor: pointer;
 }
 
 .search-field {
@@ -46,7 +51,6 @@
 }
 
 .guests-search {
-  color: #8a8a8a;
   background-color: transparent;
   border: none;
   cursor: pointer;
