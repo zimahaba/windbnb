@@ -62,7 +62,7 @@ const ModalOverlay = props => {
         locationInput.current.value = location.city + ', ' + location.country;
       }
     } else {
-showLocationIfInputAvailable();
+      showLocationIfInputAvailable();
     }
   }, [showLocationInput])
 
